@@ -21,18 +21,22 @@ import kotlinx.coroutines.launch
 class ToDoList : AppCompatActivity() {
     private lateinit var adapter:TaskAdapter
     private lateinit var viewModel:ToDoViewModel
+    private lateinit var repository: ToDoRepo
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_to_do_list)
-        val repository = ToDoRepo(ToDoDatabase.getInstance(this))
+        repository = ToDoRepo(ToDoDatabase.getInstance(this))
         val recyclerView: RecyclerView = findViewById(R.id.rvToDoList)
         viewModel = ViewModelProvider(this)[ToDoViewModel::class.java]
+
+        adapter = TaskAdapter(mutableListOf(), repository, viewModel, this)
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(this)
+
         viewModel.data.observe(this) {
-            adapter = TaskAdapter(it, repository, viewModel)
-            recyclerView.adapter = adapter
-            recyclerView.layoutManager = LinearLayoutManager(this)
+            adapter.updateData(it)
         }
         CoroutineScope(Dispatchers.IO).launch {
             val data = repository.getAllTodoItems()
@@ -71,4 +75,28 @@ class ToDoList : AppCompatActivity() {
         val alertDialog = builder.create()
         alertDialog.show()
     }
+    fun showEditDialog(todo: ToDo) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Edit Todo item:")
+        val input = EditText(this)
+        input.inputType = InputType.TYPE_CLASS_TEXT
+        input.setText(todo.item)
+        builder.setView(input)
+        builder.setPositiveButton("OK") { dialog, which ->
+            val updatedItem = input.text.toString()
+            todo.item = updatedItem
+            CoroutineScope(Dispatchers.IO).launch {
+                repository.update(todo)
+                val data = repository.getAllTodoItems()
+                runOnUiThread {
+                    viewModel.setData(data)
+                }
+            }
+        }
+        builder.setNegativeButton("Cancel") { dialog, which ->
+            dialog.cancel()
+        }
+        builder.show()
+    }
+
 }

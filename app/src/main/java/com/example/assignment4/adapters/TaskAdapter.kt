@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.assignment4.R
+import com.example.assignment4.ToDoList
 import com.example.assignment4.ToDoViewHolder
 import com.example.assignment4.ToDoViewModel
 import com.example.assignment4.database.entities.ToDo
@@ -16,13 +17,15 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class TaskAdapter(
-    items: List<ToDo>, repository: ToDoRepo,
-    viewModel: ToDoViewModel
+    items: MutableList<ToDo>, repository: ToDoRepo,
+    viewModel: ToDoViewModel,
+    activity: ToDoList,
 ) : RecyclerView.Adapter<ToDoViewHolder>() {
     var context: Context? = null
     val items = items
     val repository = repository
     val viewModel = viewModel
+    val activity = activity
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ToDoViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.view_item, parent, false)
@@ -31,7 +34,12 @@ class TaskAdapter(
     }
 
     override fun onBindViewHolder(holder: ToDoViewHolder, position: Int) {
-        holder.cbTodo.text = items.get(position).item
+        val currentItem = items[position]
+        holder.cbTodo.text = currentItem.item
+        holder.cbTodo.setOnLongClickListener {
+            activity.showEditDialog(items[position]) // Call showEditDialog from ToDoList instance
+            true
+        }
         holder.ivDelete.setOnClickListener {
             val isChecked = holder.cbTodo.isChecked
             if(isChecked){
@@ -48,6 +56,12 @@ class TaskAdapter(
             }
         }
     }
+    fun updateData(newItems: List<ToDo>) {
+        items.clear()
+        items.addAll(newItems)
+        notifyDataSetChanged()
+    }
+
 
     override fun getItemCount(): Int {
         return items.size
