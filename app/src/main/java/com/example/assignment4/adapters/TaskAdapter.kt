@@ -1,8 +1,10 @@
 package com.example.assignment4.adapters
 
-import android.content.Context
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.assignment4.R
@@ -15,18 +17,16 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Locale
 
 class TaskAdapter(
-    items: MutableList<ToDo>, repository: ToDoRepo,
-    viewModel: ToDoViewModel,
-    activity: ToDoList,
-) : RecyclerView.Adapter<ToDoViewHolder>() {
-    var context: Context? = null
-    private var items: MutableList<ToDo> = mutableListOf()
+    private var items: MutableList<ToDo>, private val repository: ToDoRepo,
+    private val viewModel: ToDoViewModel,
+    private val activity: ToDoList,
+) : RecyclerView.Adapter<ToDoViewHolder>(), Filterable {
+
     private var sortedItems: MutableList<ToDo> = mutableListOf()
-    val repository = repository
-    val viewModel = viewModel
-    val activity = activity
+    private var searchQuery: String? = null
 
     // Sorting options enum
     enum class SortOption {
@@ -35,19 +35,21 @@ class TaskAdapter(
         RECENT_DEADLINE,
         OLDEST_DEADLINE
     }
+
     // Current sort option
     private var currentSortOption: SortOption? = null
+
+    init {
+        sortedItems.addAll(items)
+    }
 
     fun setItems(newItems: List<ToDo>) {
         items.clear()
         items.addAll(newItems)
-        sortedItems.clear()
-        sortedItems.addAll(items)
-        currentSortOption?.let { sortItems(it) }
+        filterItems()
         notifyDataSetChanged()
     }
 
-    // Function to sort items based on the given option
     fun sortItems(option: SortOption) {
         currentSortOption = option
         when (option) {
@@ -59,11 +61,26 @@ class TaskAdapter(
         notifyDataSetChanged()
     }
 
+    fun setSearchQuery(query: String?) {
+        searchQuery = query
+        filterItems()
+    }
+
+    private fun filterItems() {
+        sortedItems.clear()
+        sortedItems.addAll(
+            if (searchQuery.isNullOrEmpty()) {
+                items
+            } else {
+                items.filter { it.item?.contains(searchQuery ?: "", ignoreCase = true) ?: false }
+            }
+        )
+        currentSortOption?.let { sortItems(it) }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ToDoViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.view_item, parent, false)
-        context = parent.context
         return ToDoViewHolder(view)
     }
 
@@ -82,28 +99,51 @@ class TaskAdapter(
         }
         holder.ivDelete.setOnClickListener {
             val isChecked = holder.cbTodo.isChecked
-            if(isChecked){
+            if (isChecked) {
                 CoroutineScope(Dispatchers.IO).launch {
                     repository.delete(currentItem)
                     val data = repository.getAllTodoItems()
-                    withContext(Dispatchers.Main){
+                    withContext(Dispatchers.Main) {
                         viewModel.setData(data)
                     }
                 }
-                Toast.makeText(context,"Item Deleted", Toast.LENGTH_LONG).show()
-            }else{
-                Toast.makeText(context,"Select the item to delete", Toast.LENGTH_LONG).show()
+                Toast.makeText(holder.itemView.context, "Item Deleted", Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(
+                    holder.itemView.context,
+                    "Select the item to delete",
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
     }
-    fun updateData(newItems: List<ToDo>) {
-        items.clear()
-        items.addAll(newItems)
-        currentSortOption?.let { sortItems(it) } // Maintain sorting order
+    override fun getFilter(): Filter {
+        return object : Filter() {
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val filteredList = mutableListOf<ToDo>()
+                val filterPattern = constraint.toString().lowercase(Locale.getDefault()).trim()
+
+                for (item in items) {
+                    if (item.item?.lowercase(Locale.getDefault())?.contains(filterPattern) == true) {
+                        filteredList.add(item)
+                    }
+                }
+
+                val results = FilterResults()
+                results.values = filteredList
+                return results
+            }
+
+            @Suppress("UNCHECKED_CAST")
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                sortedItems.clear()
+                sortedItems.addAll(results?.values as MutableList<ToDo>)
+                notifyDataSetChanged()
+            }
+        }
     }
+
     override fun getItemCount(): Int {
         return sortedItems.size
     }
-
-
 }
