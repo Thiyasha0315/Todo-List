@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/Item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Task Name" />
+
+    <EditText
+        android:id="@+id/Description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Description (Optional)" />
+
+    <EditText
+        android:id="@+id/Priority"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Priority (Optional)" />
+
+    <EditText
+        android:id="@+id/Deadline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Deadline (Optional)" />
+
+</LinearLayout>

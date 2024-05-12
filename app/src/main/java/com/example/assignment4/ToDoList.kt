@@ -54,15 +54,24 @@ class ToDoList : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         // Set the alert dialog title and message
         builder.setTitle("Enter New Todo item:")
-        builder.setMessage("Enter the todo item below:")
         // Create an EditText input field
-        val input = EditText(this)
-        input.inputType = InputType.TYPE_CLASS_TEXT
-        builder.setView(input)
+        val dialogLayout = layoutInflater.inflate(R.layout.dialog_add_todo, null)
+        val itemNameEditText = dialogLayout.findViewById<EditText>(R.id.Item)
+        val descriptionEditText = dialogLayout.findViewById<EditText>(R.id.Description)
+        val priorityEditText = dialogLayout.findViewById<EditText>(R.id.Priority)
+        val deadlineEditText = dialogLayout.findViewById<EditText>(R.id.Deadline)
+        builder.setView(dialogLayout)
         builder.setPositiveButton("OK") { dialog, which ->
-            val item = input.text.toString()
+            val item = itemNameEditText.text.toString()
+            val description = descriptionEditText.text.toString()
+            val priority = priorityEditText.text.toString()
+            val deadline = deadlineEditText.text.toString()
+
+            // Create a ToDo object with the input data
+            val todo = ToDo(item, description, priority, deadline)
+
             CoroutineScope(Dispatchers.IO).launch {
-                repository.insert(ToDo(item))
+                repository.insert(todo)
                 val data = repository.getAllTodoItems()
                 runOnUiThread {
                     viewModel.setData(data)
