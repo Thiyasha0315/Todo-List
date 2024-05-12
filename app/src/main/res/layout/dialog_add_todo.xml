@@ -7,25 +7,47 @@
     <EditText
         android:id="@+id/Item"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:hint="Enter Task Name" />
 
     <EditText
         android:id="@+id/Description"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:hint="Enter Description (Optional)" />
 
     <EditText
         android:id="@+id/Priority"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:hint="Enter Priority (Optional)" />
 
-    <EditText
-        android:id="@+id/Deadline"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilDeadline"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter Deadline (Optional)" />
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/Deadline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Select Deadline (Optional)"
+            android:inputType="none"
+            android:focusable="false" />
+
+        <ImageView
+            android:id="@+id/ivDatePicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:contentDescription="Date Picker"
+            android:src="@drawable/baseline_calendar_month_24"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+    <EditText
+        android:id="@+id/Category"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:hint="Enter Category (Optional)" />
 
 </LinearLayout>

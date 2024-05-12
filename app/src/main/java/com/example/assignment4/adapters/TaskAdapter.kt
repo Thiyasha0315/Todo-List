@@ -17,6 +17,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
 import java.util.Locale
 
 class TaskAdapter(
@@ -61,10 +62,10 @@ class TaskAdapter(
         notifyDataSetChanged()
     }
 
-    fun setSearchQuery(query: String?) {
+    /*fun setSearchQuery(query: String?) {
         searchQuery = query
         filterItems()
-    }
+    }*/
 
     private fun filterItems() {
         sortedItems.clear()
@@ -91,7 +92,8 @@ class TaskAdapter(
         holder.tvItemName.text = currentItem.item
         holder.tvDescription.text = currentItem.description
         holder.tvPriority.text = currentItem.priority
-        holder.tvDeadline.text = currentItem.deadline
+        holder.tvDeadline.text = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(currentItem.deadline)
+        holder.tvCategory.text = currentItem.category
 
         holder.itemView.setOnLongClickListener {
             activity.showEditDialog(currentItem) // Call showEditDialog from ToDoList instance

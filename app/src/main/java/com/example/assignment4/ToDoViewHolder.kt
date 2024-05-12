@@ -13,6 +13,7 @@ class ToDoViewHolder (view: View): RecyclerView.ViewHolder(view){
     val tvDescription: TextView = itemView.findViewById(R.id.tvDescription)
     val tvPriority: TextView = itemView.findViewById(R.id.tvPriority)
     val tvDeadline: TextView = itemView.findViewById(R.id.tvDeadline)
+    val tvCategory: TextView = itemView.findViewById(R.id.tvCategory)
 
 
     init {
