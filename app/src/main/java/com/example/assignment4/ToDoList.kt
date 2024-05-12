@@ -87,13 +87,29 @@ class ToDoList : AppCompatActivity() {
     fun showEditDialog(todo: ToDo) {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Edit Todo item:")
-        val input = EditText(this)
-        input.inputType = InputType.TYPE_CLASS_TEXT
-        input.setText(todo.item)
-        builder.setView(input)
+        val dialogLayout = layoutInflater.inflate(R.layout.dialog_add_todo, null)
+        val itemNameEditText = dialogLayout.findViewById<EditText>(R.id.Item)
+        val descriptionEditText = dialogLayout.findViewById<EditText>(R.id.Description)
+        val priorityEditText = dialogLayout.findViewById<EditText>(R.id.Priority)
+        val deadlineEditText = dialogLayout.findViewById<EditText>(R.id.Deadline)
+
+        itemNameEditText.setText(todo.item)
+        descriptionEditText.setText(todo.description)
+        priorityEditText.setText(todo.priority)
+        deadlineEditText.setText(todo.deadline)
+
+        builder.setView(dialogLayout)
         builder.setPositiveButton("OK") { dialog, which ->
-            val updatedItem = input.text.toString()
-            todo.item = updatedItem
+            val updatedItem = itemNameEditText.text.toString()
+            val updatedDescription = descriptionEditText.text.toString()
+            val updatedPriority = priorityEditText.text.toString()
+            val updatedDeadline = deadlineEditText.text.toString()
+            todo.apply {
+                item = updatedItem
+                description = updatedDescription
+                priority = updatedPriority
+                deadline = updatedDeadline
+            }
             CoroutineScope(Dispatchers.IO).launch {
                 repository.update(todo)
                 val data = repository.getAllTodoItems()

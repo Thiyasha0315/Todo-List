@@ -41,8 +41,8 @@ class TaskAdapter(
         holder.tvDescription.text = currentItem.description
         holder.tvPriority.text = currentItem.priority
         holder.tvDeadline.text = currentItem.deadline
-        
-        holder.cbTodo.setOnLongClickListener {
+
+        holder.itemView.setOnLongClickListener {
             activity.showEditDialog(items[position]) // Call showEditDialog from ToDoList instance
             true
         }
