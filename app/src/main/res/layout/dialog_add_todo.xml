@@ -22,28 +22,34 @@
         android:layout_height="48dp"
         android:hint="Enter Priority (Optional)" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilDeadline"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-        <EditText
-            android:id="@+id/Deadline"
-            android:layout_width="match_parent"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilDeadline"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Select Deadline (Optional)"
-            android:inputType="none"
-            android:focusable="false" />
+            android:layout_weight="1">
+
+            <EditText
+                android:id="@+id/Deadline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Select Deadline (Optional)"
+                android:inputType="none"
+                android:focusable="false" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <ImageView
             android:id="@+id/ivDatePicker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:contentDescription="Date Picker"
-            android:src="@drawable/baseline_calendar_month_24"/>
+            android:src="@drawable/baseline_calendar_month_24" />
+    </LinearLayout>
 
-    </com.google.android.material.textfield.TextInputLayout>
     <EditText
         android:id="@+id/Category"
         android:layout_width="match_parent"

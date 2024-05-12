@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Assignment4</string>
     <string name="add">Add Task</string>
+    <string name="app_">todoqueue</string>
 </resources>
