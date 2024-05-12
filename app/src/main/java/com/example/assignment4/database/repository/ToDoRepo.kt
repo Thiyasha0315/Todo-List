@@ -8,5 +8,5 @@ class ToDoRepo(private val db:ToDoDatabase) {
     suspend fun delete(todo:ToDo) = db.getTodoDao().deleteTodo(todo)
     fun getAllTodoItems():List<ToDo> = db.getTodoDao().getAllTodoItems()
 
-    suspend fun update(todo:ToDo) = db.getTodoDao().update(todo)
+    suspend fun update(todo:ToDo) = db.getTodoDao().updateTodo(todo)
 }
