@@ -5,4 +5,5 @@
     <color name="background">#FFFE9E60</color>
     <color name="comp_name">#02AE8D</color>
     <color name="Todo">#33DFCF</color>
+    <color name="search">#FF9800</color>
 </resources>

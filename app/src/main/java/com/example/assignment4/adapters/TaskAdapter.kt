@@ -56,8 +56,8 @@ class TaskAdapter(
         when (option) {
             SortOption.PRIORITY_LOWEST_TO_HIGHEST -> sortedItems.sortBy { it.priority }
             SortOption.PRIORITY_HIGHEST_TO_LOWEST -> sortedItems.sortByDescending { it.priority }
-            SortOption.RECENT_DEADLINE -> sortedItems.sortByDescending { it.deadline }
-            SortOption.OLDEST_DEADLINE -> sortedItems.sortBy { it.deadline }
+            SortOption.RECENT_DEADLINE -> sortedItems.sortBy { it.deadline }
+            SortOption.OLDEST_DEADLINE -> sortedItems.sortByDescending { it.deadline }
         }
         notifyDataSetChanged()
     }
