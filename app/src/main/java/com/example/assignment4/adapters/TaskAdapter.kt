@@ -36,6 +36,12 @@ class TaskAdapter(
     override fun onBindViewHolder(holder: ToDoViewHolder, position: Int) {
         val currentItem = items[position]
         holder.cbTodo.text = currentItem.item
+
+        holder.tvItemName.text = currentItem.item
+        holder.tvDescription.text = currentItem.description
+        holder.tvPriority.text = currentItem.priority
+        holder.tvDeadline.text = currentItem.deadline
+        
         holder.cbTodo.setOnLongClickListener {
             activity.showEditDialog(items[position]) // Call showEditDialog from ToDoList instance
             true
