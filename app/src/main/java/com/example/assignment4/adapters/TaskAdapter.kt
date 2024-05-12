@@ -22,10 +22,44 @@ class TaskAdapter(
     activity: ToDoList,
 ) : RecyclerView.Adapter<ToDoViewHolder>() {
     var context: Context? = null
-    val items = items
+    private var items: MutableList<ToDo> = mutableListOf()
+    private var sortedItems: MutableList<ToDo> = mutableListOf()
     val repository = repository
     val viewModel = viewModel
     val activity = activity
+
+    // Sorting options enum
+    enum class SortOption {
+        PRIORITY_LOWEST_TO_HIGHEST,
+        PRIORITY_HIGHEST_TO_LOWEST,
+        RECENT_DEADLINE,
+        OLDEST_DEADLINE
+    }
+    // Current sort option
+    private var currentSortOption: SortOption? = null
+
+    fun setItems(newItems: List<ToDo>) {
+        items.clear()
+        items.addAll(newItems)
+        sortedItems.clear()
+        sortedItems.addAll(items)
+        currentSortOption?.let { sortItems(it) }
+        notifyDataSetChanged()
+    }
+
+    // Function to sort items based on the given option
+    fun sortItems(option: SortOption) {
+        currentSortOption = option
+        when (option) {
+            SortOption.PRIORITY_LOWEST_TO_HIGHEST -> sortedItems.sortBy { it.priority }
+            SortOption.PRIORITY_HIGHEST_TO_LOWEST -> sortedItems.sortByDescending { it.priority }
+            SortOption.RECENT_DEADLINE -> sortedItems.sortByDescending { it.deadline }
+            SortOption.OLDEST_DEADLINE -> sortedItems.sortBy { it.deadline }
+        }
+        notifyDataSetChanged()
+    }
+
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ToDoViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.view_item, parent, false)
@@ -34,7 +68,7 @@ class TaskAdapter(
     }
 
     override fun onBindViewHolder(holder: ToDoViewHolder, position: Int) {
-        val currentItem = items[position]
+        val currentItem = sortedItems[position]
         holder.cbTodo.text = currentItem.item
 
         holder.tvItemName.text = currentItem.item
@@ -43,14 +77,14 @@ class TaskAdapter(
         holder.tvDeadline.text = currentItem.deadline
 
         holder.itemView.setOnLongClickListener {
-            activity.showEditDialog(items[position]) // Call showEditDialog from ToDoList instance
+            activity.showEditDialog(currentItem) // Call showEditDialog from ToDoList instance
             true
         }
         holder.ivDelete.setOnClickListener {
             val isChecked = holder.cbTodo.isChecked
             if(isChecked){
                 CoroutineScope(Dispatchers.IO).launch {
-                    repository.delete(items.get(position))
+                    repository.delete(currentItem)
                     val data = repository.getAllTodoItems()
                     withContext(Dispatchers.Main){
                         viewModel.setData(data)
@@ -65,11 +99,11 @@ class TaskAdapter(
     fun updateData(newItems: List<ToDo>) {
         items.clear()
         items.addAll(newItems)
-        notifyDataSetChanged()
+        currentSortOption?.let { sortItems(it) } // Maintain sorting order
     }
-
-
     override fun getItemCount(): Int {
-        return items.size
+        return sortedItems.size
     }
+
+
 }

@@ -3,8 +3,13 @@ package com.example.assignment4
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.InputType
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.widget.AdapterView
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Spinner
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
@@ -35,8 +40,8 @@ class ToDoList : AppCompatActivity() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        viewModel.data.observe(this) {
-            adapter.updateData(it)
+        viewModel.data.observe(this) {newData ->
+            adapter.setItems(newData)
         }
         CoroutineScope(Dispatchers.IO).launch {
             val data = repository.getAllTodoItems()
@@ -44,10 +49,26 @@ class ToDoList : AppCompatActivity() {
                 viewModel.setData(data)
             }
         }
+        val spinnerSort: Spinner = findViewById(R.id.spinnerSort)
+        spinnerSort.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                when (position) {
+                    0 -> adapter.sortItems(TaskAdapter.SortOption.PRIORITY_LOWEST_TO_HIGHEST)
+                    1 -> adapter.sortItems(TaskAdapter.SortOption.PRIORITY_HIGHEST_TO_LOWEST)
+                    2 -> adapter.sortItems(TaskAdapter.SortOption.RECENT_DEADLINE)
+                    3 -> adapter.sortItems(TaskAdapter.SortOption.OLDEST_DEADLINE)
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                // Do nothing
+            }
+        }
         val btnAddItem: Button = findViewById(R.id.btnAddToDo)
         btnAddItem.setOnClickListener {
             displayDialog(repository)
         }
+
     }
 
     private fun displayDialog(repository: ToDoRepo) {
@@ -123,5 +144,7 @@ class ToDoList : AppCompatActivity() {
         }
         builder.show()
     }
+
+
 
 }

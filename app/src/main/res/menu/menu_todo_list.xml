@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_sort_priority"
+        android:title="Sort by Priority"/>
+    <item
+        android:id="@+id/action_sort_deadline"
+        android:title="Sort by Deadline"/>
+    <item
+        android:id="@+id/action_filter_priority"
+        android:title="Filter by Priority"/>
+    <item
+        android:id="@+id/action_filter_deadline"
+        android:title="Filter by Deadline"/>
+</menu>

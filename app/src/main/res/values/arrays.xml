@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="sort_options">
+        <item>Priority lowest to highest</item>
+        <item>Priority highest to lowest</item>
+        <item>Recent Deadline</item>
+        <item>Oldest Deadline</item>
+    </string-array>
+</resources>
